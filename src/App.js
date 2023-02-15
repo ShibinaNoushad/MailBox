@@ -1,6 +1,13 @@
 import React from "react";
+import Login from "./Components/Login/Login";
+import MyNavbar from "./Components/Navbar/MyNavbar";
 function App() {
-  return <div>hello</div>;
+  return (
+    <div>
+      <MyNavbar></MyNavbar>
+      <Login/>
+    </div>
+  );
 }
 
 export default App;
