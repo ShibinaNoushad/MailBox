@@ -2,16 +2,47 @@ import React, { useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import { useRef } from "react";
 import "./Login.css";
+import { useHistory } from "react-router-dom";
 
 function Login() {
+  const history = useHistory();
   const emailRef = useRef("");
   const passwordRef = useRef("");
   const confirmPasswordRef = useRef("");
-  const [login, setLogin] = useState(false);
+  const [login, setLogin] = useState(true);
   const switchLogin = () => {
     setLogin((prev) => {
       return !prev;
     });
+  };
+  const forgotPasswordHandler = async () => {
+    try {
+      const res = await fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDIRxfXaca4nLl-FKpAUMC4MvmsZWrzRfM",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            requestType: "PASSWORD_RESET",
+            email: emailRef.current.value,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (res.ok) {
+        alert("Link is sent  successfully");
+      } else {
+        const data = await res.json();
+        let errorMessage = "Authentication failed!";
+        if (data && data.error && data.error.message) {
+          errorMessage = data.error.message;
+        }
+        throw new Error(data.error.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const loginHandler = async (e) => {
@@ -24,24 +55,30 @@ function Login() {
       alert("password not matching");
       return;
     }
+    let url;
+    if (login) {
+      url =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDIRxfXaca4nLl-FKpAUMC4MvmsZWrzRfM";
+    } else {
+      url =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDIRxfXaca4nLl-FKpAUMC4MvmsZWrzRfM";
+    }
     try {
-      const res = await fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDIRxfXaca4nLl-FKpAUMC4MvmsZWrzRfM ",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email,
-            password,
-            returnSecureToken: true,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password,
+          returnSecureToken: true,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       if (res.ok) {
         const data = await res.json();
-        console.log(data);
+        history.replace("/welcome");
+        console.log(data.idToken);
         console.log("loggedin");
       } else {
         console.log("failed");
@@ -95,8 +132,19 @@ function Login() {
           </Button>
           {"  "}
           <Button variant="primary" type="button" onClick={switchLogin}>
-            {!login ? "Login" : "SignUp"}
+            {!login ? "Login" : "Create Account"}
           </Button>
+          <br />
+          {login && (
+            <Button
+              variant="link"
+              style={{ color: "black" }}
+              className="m-2 lead"
+              onClick={forgotPasswordHandler}
+            >
+              Forgot password
+            </Button>
+          )}
         </Form>
       </Container>
     </div>
