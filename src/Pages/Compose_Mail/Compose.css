@@ -1,0 +1,22 @@
+.forms {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+  padding: 2rem;
+  margin-top: 5rem;
+
+  border-radius: 1rem;
+}
+.wrapper-class {
+  margin: 0.5rem;
+  display: flex;
+  flex-direction: column;
+}
+.editor-class {
+  order: 1;
+
+}
+.toolbar-class {
+  order: 2;
+  margin-top: 100px;
+
+}

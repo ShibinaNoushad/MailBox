@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import { useRef } from "react";
 import "./Login.css";
 import { useHistory } from "react-router-dom";
+import { authActions } from "../../Store/auth-slice";
+import { useDispatch } from "react-redux";
 
 function Login() {
+  const dispatch = useDispatch();
+  const mytoken = localStorage.getItem("token");
+  const email = localStorage.getItem("email");
+  useEffect(() => {
+    if (mytoken) {
+      const loginObj = { token: mytoken, email: email };
+      dispatch(authActions.loginHandler(loginObj));
+    }
+  }, []);
   const history = useHistory();
   const emailRef = useRef("");
   const passwordRef = useRef("");
@@ -77,9 +88,10 @@ function Login() {
       });
       if (res.ok) {
         const data = await res.json();
-        history.replace("/welcome");
+        history.replace("/home");
         console.log(data.idToken);
-        console.log("loggedin");
+        localStorage.setItem("email", email);
+        localStorage.setItem("token", data.idToken);
       } else {
         console.log("failed");
         const data = await res.json();

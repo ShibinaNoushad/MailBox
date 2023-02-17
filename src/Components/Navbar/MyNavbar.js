@@ -20,7 +20,9 @@ function MyNavbar() {
                 <Nav.Link to="/home" className="h6">
                   Home
                 </Nav.Link>
-                <NavLink to="/logout" className="h6">
+                <NavLink to="/logout" className="h6" onClick={()=>{
+                  console.log("logout");
+                }}>
                   Logout
                 </NavLink>
               </Nav>
