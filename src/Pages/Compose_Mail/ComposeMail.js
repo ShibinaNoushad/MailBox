@@ -24,6 +24,7 @@ function ComposeMail(props) {
       sub: subject,
       emailBody: body,
       sentAt: new Date().toLocaleString(),
+      read: false,
     };
     try {
       const Email = JSON.stringify(email);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Button } from "react-bootstrap";
+import { Container, Button, Badge } from "react-bootstrap";
 import ComposeMail from "../../Pages/Compose_Mail/ComposeMail";
 import Inbox from "../../Pages/Inbox/Inbox";
 import axios from "axios";
@@ -7,16 +7,21 @@ import { InboxActions } from "../../Store/Inbox-slice";
 import { useDispatch, useSelector } from "react-redux";
 
 function Home() {
+  console.log("home");
   const myemail = localStorage
     .getItem("email")
     .replace("@", "")
     .replace(".", "");
   // const data = useSelector((state) => state.inbox.inboxArr);
+  const noOfUnreadMessages = useSelector(
+    (state) => state.inbox.totalUnreadMessages
+  );
   const dispatch = useDispatch();
   const [showCompose, setShowCompose] = useState(false);
   const [showInbox, setShowInbox] = useState(true);
   let [inboxArr, setInboxArr] = useState([]);
   const getData = async () => {
+    let count = 0;
     const res = await axios.get(
       `https://mailbox-be742-default-rtdb.firebaseio.com/${myemail}.json`
     );
@@ -31,10 +36,15 @@ function Home() {
         body: res.data[key].emailBody,
         from: res.data[key].from,
         date: res.data[key].sentAt,
+        read: res.data[key].read,
       });
+      if (res.data[key].read === false) {
+        count += 1;
+      }
     }
     setInboxArr(Arr);
     dispatch(InboxActions.addMails(Arr));
+    dispatch(InboxActions.noOfUnreadMessages(count));
   };
 
   const showComposeMail = () => {
@@ -48,24 +58,7 @@ function Home() {
     setShowInbox(true);
 
     setShowCompose(false);
-    // const res = await axios.get(
-    //   `https://mailbox-be742-default-rtdb.firebaseio.com/sendItems/${myemail}.json`
-    // );
-    // //   .then((data) => {
-    // //     console.log(data);
-    // //   });
-    // let Arr = [];
-    // for (const key in res.data) {
-    //   Arr.push({
-    //     id: key,
-    //     subject: res.data[key].sub,
-    //     body: res.data[key].emailBody,
-    //     from: res.data[key].from,
-    //     date: "1/12/2001",
-    //   });
-    // }
-    // setInboxArr(Arr);
-    // dispatch(InboxActions.addMails(Arr));
+    // getData();
   };
   useEffect(() => {
     getData();
@@ -78,7 +71,7 @@ function Home() {
             Compose Mail
           </Button>
           <Button variant="danger" onClick={showInboxHandler}>
-            Inbox
+            Inbox<Badge className="py-2 mx-1">{noOfUnreadMessages}</Badge>
           </Button>
           <Button variant="success">Sent Items</Button>
         </div>
