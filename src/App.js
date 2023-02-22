@@ -4,22 +4,36 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import Login from "./Components/Login/Login";
 import MyNavbar from "./Components/Navbar/MyNavbar";
 import Home from "./Components/Home/Home";
-import ComposeMail from "./Pages/Compose_Mail/ComposeMail";
+import DisplayMessage from "./Pages/Inbox/DisplayMessage";
+import ReadInbox from "./Pages/Inbox/ReadInbox";
 
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   return (
-    <Switch>
-      <Route path="/home">
-        <Home />
-        <ComposeMail></ComposeMail>
-      </Route>
+    <>
+      <MyNavbar></MyNavbar>
       {isLoggedIn && <Redirect to="/home"></Redirect>}
-      <Route path="/" exact>
-        <MyNavbar></MyNavbar>
+      {!isLoggedIn && <Redirect to="/login"></Redirect>}
+      {/* <Route path="/home" exact>
+        {isLoggedIn && <Redirect to="/home"></Redirect>}
+        {!isLoggedIn && <Redirect to="/login"></Redirect>}
+      </Route> */}
+
+      <Route path="/login">
         <Login />
       </Route>
-    </Switch>
+      <Route path="/home" exact>
+        {!isLoggedIn && <Redirect to="/login"></Redirect>}
+        {isLoggedIn && <Home />}
+      </Route>
+      <Route path="/" exact>
+        {isLoggedIn && <Redirect to="/home"></Redirect>}
+        {!isLoggedIn && <Redirect to="/login"></Redirect>}
+      </Route>
+      <Route path="/home/:mailid">
+        <ReadInbox />
+      </Route>
+    </>
   );
 }
 

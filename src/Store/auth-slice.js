@@ -17,6 +17,7 @@ const authSlice = createSlice({
     logoutHandler(state) {
       state.isLoggedIn = false;
       state.email = null;
+      state.token = null;
     },
   },
 });

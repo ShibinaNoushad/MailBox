@@ -6,7 +6,7 @@ import { convertToRaw, EditorState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import axios from "axios";
-function ComposeMail() {
+function ComposeMail(props) {
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
@@ -23,13 +23,15 @@ function ComposeMail() {
       to: receiverEmail,
       sub: subject,
       emailBody: body,
+      sentAt: new Date().toLocaleString(),
     };
     try {
       const Email = JSON.stringify(email);
       const res = await axios.post(
-        `https://mailbox-be742-default-rtdb.firebaseio.com/sendItems/${receiverValidEmail}.json`,
+        `https://mailbox-be742-default-rtdb.firebaseio.com/${receiverValidEmail}.json`,
         Email
       );
+      console.log(res);
     } catch (error) {
       console.log(error);
     }
@@ -45,6 +47,7 @@ function ComposeMail() {
               type="button"
               className="btn-close "
               aria-label="Close"
+              onClick={props.hideCompose}
             ></button>
           </div>
           <Form.Group className="mt-4 mb-2">

@@ -89,7 +89,7 @@ function Login() {
       if (res.ok) {
         const data = await res.json();
         history.replace("/home");
-        console.log(data.idToken);
+        // console.log(data.idToken);
         localStorage.setItem("email", email);
         localStorage.setItem("token", data.idToken);
       } else {
