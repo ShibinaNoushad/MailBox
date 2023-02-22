@@ -32,7 +32,9 @@ function ComposeMail(props) {
         `https://mailbox-be742-default-rtdb.firebaseio.com/${receiverValidEmail}.json`,
         Email
       );
-      console.log(res);
+      alert("Success :)");
+
+      // console.log(res);
     } catch (error) {
       console.log(error);
     }

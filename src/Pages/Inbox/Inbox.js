@@ -7,9 +7,22 @@ import { Link } from "react-router-dom";
 import classes from "./Inbox.module.css";
 
 function Inbox(props) {
-  
+  // const [id, setId] = useState("");
+  const myemail = localStorage
+    .getItem("email")
+    .replace("@", "")
+    .replace(".", "");
+  const [del, setDel] = useState("Delete");
+  const deleteMail = async (id) => {
+    setDel("Deleting");
+    await axios.delete(
+      `https://mailbox-be742-default-rtdb.firebaseio.com/${myemail}/${id}.json`
+    );
+    setDel("Delete");
+    props.getdata();
+
+  };
   let inboxMessages = props.inbox.map((email) => {
-    console.log(email.read);
     return (
       <div key={email.id} className={classes.mainCard}>
         <div className={classes.card}>
@@ -23,8 +36,14 @@ function Inbox(props) {
             </Card.Body>
           </Link>
         </div>
-        <button type="button" className="btn btn-outline-danger ms-2">
-          X
+        <button
+          type="button"
+          className="btn btn-outline-danger py-0"
+          onClick={() => {
+            deleteMail(email.id);
+          }}
+        >
+          {del}
         </button>
       </div>
     );

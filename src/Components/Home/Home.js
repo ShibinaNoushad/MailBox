@@ -7,7 +7,7 @@ import { InboxActions } from "../../Store/Inbox-slice";
 import { useDispatch, useSelector } from "react-redux";
 
 function Home() {
-  console.log("home");
+  // console.log("home");
   const myemail = localStorage
     .getItem("email")
     .replace("@", "")
@@ -77,7 +77,9 @@ function Home() {
         </div>
       </Container>
       {showCompose && <ComposeMail hideCompose={hideComposeMail} />}
-      {showInbox && <Inbox show={showInbox} inbox={inboxArr} />}
+      {showInbox && (
+        <Inbox show={showInbox} inbox={inboxArr} getdata={getData} />
+      )}
     </>
   );
 }
