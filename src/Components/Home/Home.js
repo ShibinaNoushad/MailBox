@@ -19,15 +19,16 @@ function Home() {
   const dispatch = useDispatch();
   const [showCompose, setShowCompose] = useState(false);
   const [showInbox, setShowInbox] = useState(true);
+  const [showSentBox, setShowSentBox] = useState(false);
   let [inboxArr, setInboxArr] = useState([]);
+  let [sentBoxArr, setSentBoxArr] = useState([]);
   const getData = async () => {
     let count = 0;
     const res = await axios.get(
       `https://mailbox-be742-default-rtdb.firebaseio.com/${myemail}.json`
     );
-    //   .then((data) => {
-    //     console.log(data);
-    //   });
+    console.log(res);
+
     let Arr = [];
     for (const key in res.data) {
       Arr.push({
@@ -46,22 +47,56 @@ function Home() {
     dispatch(InboxActions.addMails(Arr));
     dispatch(InboxActions.noOfUnreadMessages(count));
   };
+  const showSentBoxHandler = () => {
+    getSentMails();
+    dispatch(InboxActions.changetoSentBox());
+    setShowInbox(false);
+    setShowCompose(false);
+    setShowSentBox(true);
+  };
+  const getSentMails = async () => {
+    const res = await axios.get(
+      `https://mailbox-be742-default-rtdb.firebaseio.com/sentbox/${myemail}.json`
+    );
+    console.log(res);
+    let sentArr = [];
+    for (const key in res.data) {
+      // console.log(res.data[key]);
+      // sentArr.push(res.data[key]);
+      const obj = {
+        id: key,
+        subject: res.data[key].sub,
+        body: res.data[key].emailBody,
+        to: res.data[key].to,
+        date: res.data[key].sentAt,
+      };
+      sentArr.push({ ...obj });
+    }
+    setSentBoxArr(sentArr);
+    dispatch(InboxActions.addtoSentBox(sentArr));
+
+    console.log(sentArr);
+  };
 
   const showComposeMail = () => {
     setShowCompose(true);
     setShowInbox(false);
+    setShowSentBox(false);
   };
   const hideComposeMail = () => {
     setShowCompose(false);
   };
   const showInboxHandler = async () => {
+    dispatch(InboxActions.changetoInbox());
     setShowInbox(true);
-
+    setShowSentBox(false);
     setShowCompose(false);
     // getData();
   };
   useEffect(() => {
     getData();
+    dispatch(InboxActions.changetoInbox());
+    getSentMails();
   }, []);
   return (
     <>
@@ -73,13 +108,14 @@ function Home() {
           <Button variant="danger" onClick={showInboxHandler}>
             Inbox<Badge className="py-2 mx-1">{noOfUnreadMessages}</Badge>
           </Button>
-          <Button variant="success">Sent Items</Button>
+          <Button variant="success" onClick={showSentBoxHandler}>
+            Sent Items
+          </Button>
         </div>
       </Container>
       {showCompose && <ComposeMail hideCompose={hideComposeMail} />}
-      {showInbox && (
-        <Inbox show={showInbox} inbox={inboxArr} getdata={getData} />
-      )}
+      {showInbox && <Inbox inbox={inboxArr} getdata={getData} />}
+      {showSentBox && <Inbox inbox={sentBoxArr} getdata={getSentMails}></Inbox>}
     </>
   );
 }

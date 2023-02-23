@@ -11,6 +11,10 @@ function ComposeMail(props) {
     EditorState.createEmpty()
   );
   const receiverEmailRef = useRef();
+  const userEmail = localStorage
+    .getItem("email")
+    .replace("@", "")
+    .replace(".", "");
   const subjectRef = useRef();
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -28,6 +32,11 @@ function ComposeMail(props) {
     };
     try {
       const Email = JSON.stringify(email);
+      await axios.post(
+        `https://mailbox-be742-default-rtdb.firebaseio.com/sentbox/${userEmail}.json`,
+        Email
+      );
+
       const res = await axios.post(
         `https://mailbox-be742-default-rtdb.firebaseio.com/${receiverValidEmail}.json`,
         Email
