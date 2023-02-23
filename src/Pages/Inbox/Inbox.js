@@ -7,12 +7,14 @@ import { Link } from "react-router-dom";
 import classes from "./Inbox.module.css";
 
 function Inbox(props) {
+  console.log("inbox");
+  
   const userEmail = localStorage
     .getItem("email")
     .replace("@", "")
     .replace(".", "");
   const inboxState = useSelector((state) => state.inbox.inboxOrSentBox);
-  console.log(inboxState);
+  // console.log(inboxState);
   // const [id, setId] = useState("");
   const myemail = localStorage
     .getItem("email")

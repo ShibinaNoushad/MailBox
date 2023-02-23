@@ -5,7 +5,7 @@ const InboxSlice = createSlice({
   initialState: {
     inboxArr: [],
     totalUnreadMessages: 0,
-    inboxOrSentBox: null,
+    inboxOrSentBox: true,
     sentBoxArr: [],
   },
   reducers: {
