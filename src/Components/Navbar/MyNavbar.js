@@ -1,16 +1,20 @@
 import React from "react";
 import { Navbar, Nav, Container, NavLink } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { authActions } from "../../Store/auth-slice";
 
 function MyNavbar() {
   const dispatch = useDispatch();
+  const log = useSelector((state) => state.auth.isLoggedIn);
   const history = useHistory();
   const logoutHandler = () => {
-    dispatch(authActions.logoutHandler());
+    console.log(log);
     localStorage.removeItem("email");
     localStorage.removeItem("token");
+    dispatch(authActions.logoutHandler());
+    console.log(log);
+
     history.replace("/");
   };
   return (
@@ -31,9 +35,9 @@ function MyNavbar() {
                 <Nav.Link to="/home" className="h6">
                   Home
                 </Nav.Link>
-                <NavLink className="h6" onClick={logoutHandler}>
+                <Nav.Link className="h6" onClick={logoutHandler}>
                   Logout
-                </NavLink>
+                </Nav.Link>
               </Nav>
             </Navbar.Collapse>
           </Container>

@@ -92,6 +92,10 @@ function Login() {
         // console.log(data.idToken);
         localStorage.setItem("email", email);
         localStorage.setItem("token", data.idToken);
+
+        const loginObj = { token: data.idToken, email: email };
+
+        dispatch(authActions.loginHandler(loginObj));
       } else {
         console.log("failed");
         const data = await res.json();
